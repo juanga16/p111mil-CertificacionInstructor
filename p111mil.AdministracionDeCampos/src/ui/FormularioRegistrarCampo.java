@@ -30,7 +30,10 @@ public class FormularioRegistrarCampo extends javax.swing.JFrame {
     private List<TipoDeSuelo> tiposDeSuelo;
     private List<Lote> lotes;
     private Lote loteEnEdicion;
-    
+    private CampoDao campoDao;
+    private EstadoCampoDao estadoCampoDao;
+    private LoteDao loteDao;
+            
     /**
      * Creates new form FormularioRegistrarCampo
      */
@@ -38,6 +41,9 @@ public class FormularioRegistrarCampo extends javax.swing.JFrame {
         tiposDeSuelo = new TipoDeSueloDao().buscarTodos();
         lotes = new ArrayList<Lote>();
         loteEnEdicion = null;
+        campoDao = new CampoDao();
+        estadoCampoDao = new EstadoCampoDao();
+        loteDao = new LoteDao();
         
         initComponents();           
         limpiarFormulario();
@@ -82,6 +88,11 @@ public class FormularioRegistrarCampo extends javax.swing.JFrame {
         labelNombreCampo.setText("Nombre");
 
         textoNombreDeCampo.setText("jTextField1");
+        textoNombreDeCampo.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                textoNombreDeCampoFocusLost(evt);
+            }
+        });
 
         labelErrorCampo.setForeground(new java.awt.Color(255, 0, 0));
         labelErrorCampo.setText("Este nombre ya está en uso");
@@ -303,25 +314,16 @@ public class FormularioRegistrarCampo extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void buttonRegistrarCampoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonRegistrarCampoActionPerformed
-        CampoDao campoDao = new CampoDao();
-        EstadoCampoDao estadoCampoDao = new EstadoCampoDao();
-        
         labelErrorCampo.setVisible(false);
                 
         // Valido los valores del campo
         String nombreDeCampo = textoNombreDeCampo.getText().trim();                
-        if (nombreDeCampo.equals("")) {
+        if (nombreDeCampo.isEmpty()) {
             labelErrorCampo.setText("El nombre del campo es obligatorio");
             labelErrorCampo.setVisible(true);
             textoNombreDeCampo.requestFocus();
             return;
-        }
-        
-        if (campoDao.existeConMismoNombre(nombreDeCampo)) {
-            labelErrorCampo.setText("Este nombre ya está en uso");
-            labelErrorCampo.setVisible(true);
-            textoNombreDeCampo.requestFocus();
-        }
+        }                
         
         if (textoSuperficieDeCampo.getText().trim().equals("")) {
             labelErrorCampo.setText("La superficie del campo es obligatoria");
@@ -401,10 +403,8 @@ public class FormularioRegistrarCampo extends javax.swing.JFrame {
     }//GEN-LAST:event_textoSuperficieDeCampoKeyTyped
 
     private void buttonAgregarLoteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonAgregarLoteActionPerformed
-        LoteDao loteDao = new LoteDao();
-        
         labelErrorLote.setVisible(false);                                       
-        if (textoNumeroDeLote.getText().trim().equals("")) {
+        if (textoNumeroDeLote.getText().trim().isEmpty()) {
             labelErrorLote.setText("El numero del lote es obligatorio");
             labelErrorLote.setVisible(true);
             textoNumeroDeLote.requestFocus();
@@ -512,6 +512,16 @@ public class FormularioRegistrarCampo extends javax.swing.JFrame {
     private void buttonCancelarRegistroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonCancelarRegistroActionPerformed
         this.dispose();
     }//GEN-LAST:event_buttonCancelarRegistroActionPerformed
+
+    private void textoNombreDeCampoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_textoNombreDeCampoFocusLost
+        labelErrorCampo.setVisible(false);
+        
+        if (! textoNombreDeCampo.getText().trim().isEmpty() && campoDao.existeConMismoNombre(textoNombreDeCampo.getText())) {
+            labelErrorCampo.setText("Este nombre ya está en uso");
+            labelErrorCampo.setVisible(true);
+            textoNombreDeCampo.requestFocus();
+        }
+    }//GEN-LAST:event_textoNombreDeCampoFocusLost
 
     /**
      * @param args the command line arguments

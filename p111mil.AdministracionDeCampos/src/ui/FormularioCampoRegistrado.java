@@ -23,6 +23,8 @@ public class FormularioCampoRegistrado extends javax.swing.JFrame {
         
         this.campo = campo;
         this.cargarTablaLotes();
+        
+        this.labelCampo.setText("El campo '" + campo.getNombre() + "' de " + campo.getSuperficie() + "ha ha sido registrado");
     }
     
     /**
@@ -48,6 +50,7 @@ public class FormularioCampoRegistrado extends javax.swing.JFrame {
         labelCampo = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Campo registrado con exito");
 
         labelLotes.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         labelLotes.setText("Lotes");
